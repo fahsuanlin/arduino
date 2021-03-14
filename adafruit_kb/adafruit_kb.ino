@@ -177,7 +177,7 @@ void setup(void)
   pinMode(kPin, INPUT);
   pinMode(lPin, INPUT);
 }
-
+ 
 /**************************************************************************/
 /*!
     @brief  Constantly poll for new command or response data

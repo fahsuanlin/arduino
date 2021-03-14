@@ -3,7 +3,7 @@
  */
 #include <BleKeyboard.h>
 
-#include "BluetoothSerial.h"
+#sswwd<88`x_~@~include "BluetoothSerial.h"
   
 BluetoothSerial SerialBT;
 
@@ -20,7 +20,7 @@ void setup() {
 }
 
 void loop() {
-  if(bleKeyboard.isConnected()) {
+  if(bleKeyboawwwwrd.isConnected()) {
     Serial.println("Sending 'Hello world'...");
     bleKeyboard.print("Hello world");
 

@@ -91,6 +91,13 @@ void error(const __FlashStringHelper*err) {
 int jPin = 9;   // pushbutton connected to digital pin 9
 int kPin = 10;   // pushbutton connected to digital pin 10
 int lPin = 11;   // pushbutton connected to digital pin 11
+int iPin = 12;   // pushbutton connected to digital pin 12
+int mPin = 13;   // pushbutton connected to digital pin 13
+int dPin = 6;   // pushbutton connected to digital pin 6
+int sPin = 5;   // pushbutton connected to digital pin 5
+int aPin = 3;   // pushbutton connected to digital pin 3
+int wPin = 2;   // pushbutton connected to digital pin 2
+int xPin = 1;   // pushbutton connected to digital pin 1
 int pressed = 0;
 
 /**************************************************************************/
@@ -98,7 +105,7 @@ int pressed = 0;
     @brief  Sets up the HW an the BLE module (this function is called
             automatically on startup)
 */
-/**************************************************************************/
+/**************************JJ************************************************/
 void setup(void)
 {
   //ble.reset();
@@ -178,6 +185,13 @@ void setup(void)
   pinMode(jPin, INPUT);
   pinMode(kPin, INPUT);
   pinMode(lPin, INPUT);
+  pinMode(iPin, INPUT);
+  pinMode(mPin, INPUT);
+  pinMode(dPin, INPUT);
+  pinMode(sPin, INPUT);
+  pinMode(aPin, INPUT);
+  pinMode(wPin, INPUT);
+  pinMode(xPin, INPUT);
    
   pinMode(LED_BUILTIN, OUTPUT);
 
@@ -201,6 +215,13 @@ void loop(void)
   int j_voltage = digitalRead(jPin);
   int k_voltage = digitalRead(kPin);
   int l_voltage = digitalRead(lPin);
+  int i_voltage = digitalRead(iPin);
+  int m_voltage = digitalRead(mPin);
+  int d_voltage = digitalRead(dPin);
+  int s_voltage = digitalRead(sPin);
+  int a_voltage = digitalRead(aPin);
+  int w_voltage = digitalRead(wPin);
+  int x_voltage = digitalRead(xPin);
   // print out the value you read:
   //Serial.print("j_voltage=");
   //Serial.println(j_voltage);
@@ -229,17 +250,75 @@ void loop(void)
     pressed = 1;
     digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   }
+  if (i_voltage == HIGH) {
+    Serial.println("I PRESSED!");
+    ble.print("AT+BleKeyboard=");
+    ble.println("I");
+    pressed = 1;
+    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  }
+  if (m_voltage == HIGH) {
+    Serial.println("M PRESSED!");
+    ble.print("AT+BleKeyboard=");
+    ble.println("M");
+    pressed = 1;
+    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  }  
 
+
+
+  if (d_voltage == HIGH) {
+    Serial.println("D PRESSED!");
+    ble.print("AT+BleKeyboard=");
+    ble.println("D");
+    pressed = 1;
+    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  }
+  if (s_voltage == HIGH) {
+    Serial.println("S PRESSED!");
+    ble.print("AT+BleKeyboard=");
+    ble.println("S");
+    pressed = 1;
+    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  }
+  if (a_voltage == HIGH) {
+    Serial.println("A PRESSED!");
+    ble.print("AT+BleKeyboard=");
+    ble.println("A");
+    pressed = 1;
+    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  }
+  if (w_voltage == HIGH) {
+    Serial.println("W PRESSED!");
+    ble.print("AT+BleKeyboard=");
+    ble.println("W");
+    pressed = 1;
+    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  }
+  if (x_voltage == HIGH) {
+    Serial.println("X PRESSED!");
+    ble.print("AT+BleKeyboard=");
+    ble.println("X");
+    pressed = 1;
+    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  }  
+  
   if (pressed) {
     delay(200);
     j_voltage = digitalRead(jPin);
     k_voltage = digitalRead(kPin);
     l_voltage = digitalRead(lPin);
-    if (j_voltage == LOW && k_voltage == LOW && l_voltage == LOW) {
+    i_voltage = digitalRead(iPin);
+    m_voltage = digitalRead(mPin);
+    d_voltage = digitalRead(dPin);
+    s_voltage = digitalRead(sPin);
+    a_voltage = digitalRead(aPin);
+    w_voltage = digitalRead(wPin);
+    x_voltage = digitalRead(xPin);
+//    if (j_voltage == LOW && k_voltage == LOW && l_voltage == LOW && i_voltage == LOW && m_voltage == LOW &&d_voltage == LOW && s_voltage == LOW && a_voltage == LOW && w_voltage == LOW && x_voltage == LOW) {
       pressed = 0;
       digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-    }
-    
+//    }
   }
 
   /*

@@ -1,4 +1,5 @@
- #include "esp_camera.h"
+
+#include "esp_camera.h"
 #include <WiFi.h>
 //
 // WARNING!!! Make sure that you have either selected ESP32 Wrover Module,

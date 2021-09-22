@@ -14,6 +14,7 @@
 
 int voltage_previous = 0;
 unsigned long lastDebounceTime;
+int RXLED = 17;  // The RX LED has a defined Arduino pin
 
 // the setup routine runs once when you press reset:
 void setup() {
@@ -25,6 +26,7 @@ void setup() {
   voltage_previous = 0;
   lastDebounceTime = millis();
 
+  pinMode(RXLED, OUTPUT);  // Set RX LED as an output
 }
 
 // the loop routine runs over and over again forever:
@@ -46,10 +48,13 @@ void loop() {
     if (abs(voltage - voltage_previous) > 100) {
       // increment the button counter
       // type out a message
-      Keyboard.print("=");
+      Keyboard.print("5");
       voltage_previous = voltage;
 
+      digitalWrite(RXLED, HIGH);   // set the RX LED ON
       delay(100);
+      digitalWrite(RXLED, LOW);   // set the RX LED ON
+      
     }
     else {
       // save the current button state for comparison next time:

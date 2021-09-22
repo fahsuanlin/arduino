@@ -143,8 +143,8 @@ void setup(void)
   ble.info();
 
   /* Change the device name to make it easier to find */
-  Serial.println(F("Setting device name to 'Bluefruit Keyboard': "));
-  if (! ble.sendCommandCheckOK(F( "AT+GAPDEVNAME=Bluefruit Keyboard" )) ) {
+  Serial.println(F("Setting device name to 'TrueImage 10-button': "));
+  if (! ble.sendCommandCheckOK(F( "AT+GAPDEVNAME=TrueImage 10-button" )) ) {
     error(F("Could not set device name?"));
   }
 
@@ -304,7 +304,7 @@ void loop(void)
   }  
   
   if (pressed) {
-    delay(200);
+    delay(400);
     j_voltage = digitalRead(jPin);
     k_voltage = digitalRead(kPin);
     l_voltage = digitalRead(lPin);

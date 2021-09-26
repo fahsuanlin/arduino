@@ -230,13 +230,13 @@ void loop(void)
   //Serial.println(k_voltage);
   //Serial.print("l_voltage=");
   //Serial.println(l_voltage);
-  if (j_voltage == HIGH) {
-    Serial.println("J PRESSED!");
-    ble.print("AT+BleKeyboard=");
-    ble.println("J");
-    pressed = 1;
-    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  }
+  // if (j_voltage == HIGH) {
+  //  Serial.println("J PRESSED!");
+  //  ble.print("AT+BleKeyboard=");
+  //  ble.println("J");
+  //  pressed = 1;
+  //  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  //}
   if (k_voltage == HIGH) {
     Serial.println("K PRESSED!");
     ble.print("AT+BleKeyboard=");

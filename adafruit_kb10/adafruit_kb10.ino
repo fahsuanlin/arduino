@@ -233,35 +233,35 @@ void loop(void)
   if (j_voltage == HIGH) {
    Serial.println("J PRESSED!");
    ble.print("AT+BleKeyboard=");
-   ble.println("1");
+   ble.println("6");
    pressed = 1;
     digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   }
   if (k_voltage == HIGH) {
     Serial.println("K PRESSED!");
     ble.print("AT+BleKeyboard=");
-    ble.println("2");
+    ble.println("7");
     pressed = 1;
     digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   }
   if (l_voltage == HIGH) {
     Serial.println("L PRESSED!");
     ble.print("AT+BleKeyboard=");
-    ble.println("3");
+    ble.println("8");
     pressed = 1;
     digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   }
   if (i_voltage == HIGH) {
     Serial.println("I PRESSED!");
     ble.print("AT+BleKeyboard=");
-    ble.println("4");
+    ble.println("9");
     pressed = 1;
     digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   }
   if (m_voltage == HIGH) {
     Serial.println("M PRESSED!");
     ble.print("AT+BleKeyboard=");
-    ble.println("5");
+    ble.println("0");
     pressed = 1;
     digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   }  
@@ -271,35 +271,35 @@ void loop(void)
   if (d_voltage == HIGH) {
     Serial.println("D PRESSED!");
     ble.print("AT+BleKeyboard=");
-    ble.println("6");
+    ble.println("5");
     pressed = 1;
     digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   }
   if (s_voltage == HIGH) {
     Serial.println("S PRESSED!");
     ble.print("AT+BleKeyboard=");
-    ble.println("7");
+    ble.println("4");
     pressed = 1;
     digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   }
   if (a_voltage == HIGH) {
     Serial.println("A PRESSED!");
     ble.print("AT+BleKeyboard=");
-    ble.println("8");
+    ble.println("3");
     pressed = 1;
     digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   }
   if (w_voltage == HIGH) {
     Serial.println("W PRESSED!");
     ble.print("AT+BleKeyboard=");
-    ble.println("9");
+    ble.println("2");
     pressed = 1;
     digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   }
   if (x_voltage == HIGH) {
     Serial.println("X PRESSED!");
     ble.print("AT+BleKeyboard=");
-    ble.println("0");
+    ble.println("1");
     pressed = 1;
     digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   }  

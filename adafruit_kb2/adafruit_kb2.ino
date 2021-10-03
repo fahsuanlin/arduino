@@ -88,14 +88,6 @@ void error(const __FlashStringHelper*err) {
 }
 
 
-int jPin = 9;   // pushbutton connected to digital pin 9
-int kPin = 10;   // pushbutton connected to digital pin 10
-int lPin = 11;   // pushbutton connected to digital pin 11
-int iPin = 12;   // pushbutton connected to digital pin 12
-int mPin = 13;   // pushbutton connected to digital pin 13
-int dPin = 6;   // pushbutton connected to digital pin 6
-int sPin = 5;   // pushbutton connected to digital pin 5
-int aPin = 3;   // pushbutton connected to digital pin 3
 int wPin = 2;   // pushbutton connected to digital pin 2
 int xPin = 1;   // pushbutton connected to digital pin 1
 int pressed = 0;
@@ -143,13 +135,8 @@ void setup(void)
   ble.info();
 
   /* Change the device name to make it easier to find */
-<<<<<<< HEAD
-  Serial.println(F("Setting device name to 'TrueImage 10-button': "));
-  if (! ble.sendCommandCheckOK(F( "AT+GAPDEVNAME=TrueImage 10-button" )) ) {
-=======
   Serial.println(F("Setting device name to 'Bluefruit Keyboard': "));
   if (! ble.sendCommandCheckOK(F( "AT+GAPDEVNAME=TrueImage 10-button Kb" )) ) {
->>>>>>> 93d219ad9121125b5629a6fe8e1b2a9fe21a027d
     error(F("Could not set device name?"));
   }
 
@@ -187,14 +174,6 @@ void setup(void)
   Serial.println();
 
 
-  pinMode(jPin, INPUT);
-  pinMode(kPin, INPUT);
-  pinMode(lPin, INPUT);
-  pinMode(iPin, INPUT);
-  pinMode(mPin, INPUT);
-  pinMode(dPin, INPUT);
-  pinMode(sPin, INPUT);
-  pinMode(aPin, INPUT);
   pinMode(wPin, INPUT);
   pinMode(xPin, INPUT);
    
@@ -218,14 +197,6 @@ void loop(void)
   // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
   //float voltage = sensorValue * (5.0 / 1023.0);
   //voltage = sensorValue;
-  int j_voltage = digitalRead(jPin);
-  int k_voltage = digitalRead(kPin);
-  int l_voltage = digitalRead(lPin);
-  int i_voltage = digitalRead(iPin);
-  int m_voltage = digitalRead(mPin);
-  int d_voltage = digitalRead(dPin);
-  int s_voltage = digitalRead(sPin);
-  int a_voltage = digitalRead(aPin);
   int w_voltage = digitalRead(wPin);
   int x_voltage = digitalRead(xPin);
   // print out the value you read:
@@ -235,65 +206,7 @@ void loop(void)
   //Serial.println(k_voltage);
   //Serial.print("l_voltage=");
   //Serial.println(l_voltage);
-  if (j_voltage == HIGH) {
-    Serial.println("J PRESSED!");
-    ble.print("AT+BleKeyboard=");
-    ble.println("J");
-    pressed = 1;
-    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  }
-  if (k_voltage == HIGH) {
-    Serial.println("K PRESSED!");
-    ble.print("AT+BleKeyboard=");
-    ble.println("K");
-    pressed = 1;
-    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  }
-  if (l_voltage == HIGH) {
-    Serial.println("L PRESSED!");
-    ble.print("AT+BleKeyboard=");
-    ble.println("L");
-    pressed = 1;
-    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  }
-  if (i_voltage == HIGH) {
-    Serial.println("I PRESSED!");
-    ble.print("AT+BleKeyboard=");
-    ble.println("I");
-    pressed = 1;
-    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  }
-  if (m_voltage == HIGH) {
-    Serial.println("M PRESSED!");
-    ble.print("AT+BleKeyboard=");
-    ble.println("M");
-    pressed = 1;
-    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  }  
-
-
-
-  if (d_voltage == HIGH) {
-    Serial.println("D PRESSED!");
-    ble.print("AT+BleKeyboard=");
-    ble.println("D");
-    pressed = 1;
-    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  }
-  if (s_voltage == HIGH) {
-    Serial.println("S PRESSED!");
-    ble.print("AT+BleKeyboard=");
-    ble.println("S");
-    pressed = 1;
-    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  }
-  if (a_voltage == HIGH) {
-    Serial.println("A PRESSED!");
-    ble.print("AT+BleKeyboard=");
-    ble.println("A");
-    pressed = 1;
-    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  }
+  
   if (w_voltage == HIGH) {
     Serial.println("W PRESSED!");
     ble.print("AT+BleKeyboard=");
@@ -310,15 +223,7 @@ void loop(void)
   }  
   
   if (pressed) {
-    delay(400);
-    j_voltage = digitalRead(jPin);
-    k_voltage = digitalRead(kPin);
-    l_voltage = digitalRead(lPin);
-    i_voltage = digitalRead(iPin);
-    m_voltage = digitalRead(mPin);
-    d_voltage = digitalRead(dPin);
-    s_voltage = digitalRead(sPin);
-    a_voltage = digitalRead(aPin);
+    delay(200);
     w_voltage = digitalRead(wPin);
     x_voltage = digitalRead(xPin);
 //    if (j_voltage == LOW && k_voltage == LOW && l_voltage == LOW && i_voltage == LOW && m_voltage == LOW &&d_voltage == LOW && s_voltage == LOW && a_voltage == LOW && w_voltage == LOW && x_voltage == LOW) {

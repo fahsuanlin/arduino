@@ -27,6 +27,7 @@ void setup() {
   lastDebounceTime = millis();
 
   pinMode(RXLED, OUTPUT);  // Set RX LED as an output
+  pinMode(8, OUTPUT);      // Set 2 as an output
 }
 
 // the loop routine runs over and over again forever:
@@ -52,9 +53,11 @@ void loop() {
       voltage_previous = voltage;
 
       digitalWrite(RXLED, HIGH);   // set the RX LED ON
+      digitalWrite(8, HIGH);   
       delay(100);
-      digitalWrite(RXLED, LOW);   // set the RX LED ON
-      
+      digitalWrite(RXLED, LOW);   // set the RX LED OFF
+      digitalWrite(8, LOW);   
+
     }
     else {
       // save the current button state for comparison next time:

@@ -22,8 +22,7 @@ while(~flag_stop)
     end;
 end;
 
-
-%clear USB port buffer
+%send a few pulses and triggers....
 for i=1:12
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

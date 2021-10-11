@@ -93,12 +93,12 @@ void loop() {
     }
     else {
       //Serial.println("NOTHING");
-      if (led_status > 0) {
-        if (millis() - time_ttl > debounce_time_ttl) {
-          digitalWrite(ttl_port, LOW);
-          led_status = 0;
-        }
-      }
+      //if (led_status > 0) {
+      //  if (millis() - time_ttl > debounce_time_ttl) {
+      //    digitalWrite(ttl_port, LOW);
+      //    led_status = 0;
+      //  }
+      //}
     }
   }
 }

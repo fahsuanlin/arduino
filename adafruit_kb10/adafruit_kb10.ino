@@ -143,13 +143,8 @@ void setup(void)
   ble.info();
 
   /* Change the device name to make it easier to find */
-<<<<<<< HEAD
-  Serial.println(F("Setting device name to 'TrueImage 10-button': "));
-  if (! ble.sendCommandCheckOK(F( "AT+GAPDEVNAME=TrueImage 10-button" )) ) {
-=======
   Serial.println(F("Setting device name to 'Bluefruit Keyboard': "));
   if (! ble.sendCommandCheckOK(F( "AT+GAPDEVNAME=TrueImage 10-button Kb" )) ) {
->>>>>>> 93d219ad9121125b5629a6fe8e1b2a9fe21a027d
     error(F("Could not set device name?"));
   }
 

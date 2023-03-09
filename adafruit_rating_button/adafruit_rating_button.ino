@@ -51,7 +51,8 @@ Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_
 
 // A small helper
 void error(const __FlashStringHelper*err) {
-  Serial.println(err);
+  //Serial.println(err);
+  digitalWrite(LED_BUILTIN, HIGH); 
   while (1);
 }
 
@@ -60,10 +61,6 @@ void error(const __FlashStringHelper*err) {
 int32_t hrmServiceId;
 int32_t hrmMeasureCharId;
 int32_t hrmLocationCharId;
-
-// Analog pin for potentiometer
-int analogPin = 0;
-
 /**************************************************************************/
 /*!
     @brief  Sets up the HW an the BLE module (this function is called
@@ -77,24 +74,23 @@ void setup(void)
 
   boolean success;
 
-  Serial.begin(115200);
-  Serial.println(F("Adafruit Bluefruit Heart Rate Monitor (HRM) Example"));
-  Serial.println(F("---------------------------------------------------"));
+  //Serial.begin(115200);
+  //Serial.println(F("Adafruit Bluefruit Heart Rate Monitor (HRM) Example"));
+  //Serial.println(F("---------------------------------------------------"));
 
   randomSeed(micros());
 
-
   /* Initialise the module */
-  Serial.print(F("Initialising the Bluefruit LE module: "));
+  //Serial.print(F("Initialising the Bluefruit LE module: "));
 
   if ( !ble.begin(VERBOSE_MODE) )
   {
     error(F("Couldn't find Bluefruit, make sure it's in CoMmanD mode & check wiring?"));
   }
-  Serial.println( F("OK!") );
+  //Serial.println( F("OK!") );
 
   /* Perform a factory reset to make sure everything is in a known state */
-  Serial.println(F("Performing a factory reset: "));
+  //Serial.println(F("Performing a factory reset: "));
   if (! ble.factoryReset() ){
        error(F("Couldn't factory reset"));
   }
@@ -102,7 +98,7 @@ void setup(void)
   /* Disable command echo from Bluefruit */
   ble.echo(false);
 
-  Serial.println("Requesting Bluefruit info:");
+  //Serial.println("Requesting Bluefruit info:");
   /* Print Bluefruit information */
   ble.info();
 
@@ -111,81 +107,76 @@ void setup(void)
   // ble.setInterCharWriteDelay(5); // 5 ms
 
   /* Change the device name to make it easier to find */
-  Serial.println(F("Setting device name to 'TrueImage Rating Button1': "));
+  //Serial.println(F("Setting device name to 'Bluefruit HRM': "));
 
-  if (! ble.sendCommandCheckOK(F("AT+GAPDEVNAME=TrueImage Rating Button1")) ) {
+  if (! ble.sendCommandCheckOK(F("AT+GAPDEVNAME=Bluefruit HRM")) ) {
     error(F("Could not set device name?"));
-
-    return;
   }
-  //delay(5000);
 
   /* Add the Heart Rate Service definition */
   /* Service ID should be 1 */
-  Serial.println(F("Adding the Button Service definition (UUID = 0x180D): "));
+  //Serial.println(F("Adding the Heart Rate Service definition (UUID = 0x180D): "));
   success = ble.sendCommandWithIntReply( F("AT+GATTADDSERVICE=UUID=0x180D"), &hrmServiceId);
   if (! success) {
-    error(F("Could not add Button service"));
+    error(F("Could not add HRM service"));
   }
 
-  /* Add the Button Measurement characteristic */
+  /* Add the Heart Rate Measurement characteristic */
   /* Chars ID for Measurement should be 1 */
-  Serial.println(F("Adding the Button Measurement characteristic (UUID = 0x2A37): "));
-  success = ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A37, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=2, VALUE=00-10"), &hrmMeasureCharId);
+  //Serial.println(F("Adding the Heart Rate Measurement characteristic (UUID = 0x2A37): "));
+  success = ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A37, PROPERTIES=0x10, MIN_LEN=2, MAX_LEN=3, VALUE=00-40"), &hrmMeasureCharId);
     if (! success) {
-    error(F("Could not add Button characteristic"));
+    error(F("Could not add HRM characteristic"));
   }
 
   /* Add the Body Sensor Location characteristic */
   /* Chars ID for Body should be 2 */
-  Serial.println(F("Adding the Body Sensor Location characteristic (UUID = 0x2A38): "));
-  success = ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A38, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=2, VALUE=00-10"), &hrmLocationCharId);
+  //Serial.println(F("Adding the Body Sensor Location characteristic (UUID = 0x2A38): "));
+  success = ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A38, PROPERTIES=0x02, MIN_LEN=1, VALUE=3"), &hrmLocationCharId);
     if (! success) {
     error(F("Could not add BSL characteristic"));
   }
 
   /* Add the Heart Rate Service to the advertising data (needed for Nordic apps to detect the service) */
-  Serial.print(F("Adding Button Service UUID to the advertising payload: "));
+  //Serial.print(F("Adding Heart Rate Service UUID to the advertising payload: "));
   ble.sendCommandCheckOK( F("AT+GAPSETADVDATA=02-01-06-05-02-0d-18-0a-18") );
 
   /* Reset the device for the new service setting changes to take effect */
-  Serial.print(F("Performing a SW reset (service changes require a reset): "));
+  //Serial.print(F("Performing a SW reset (service changes require a reset): "));
   ble.reset();
 
   //Serial.println();
-
-  //ble.println( F("AT+GATTCLEAR") );
 }
+
+int analogPin = 0;
 
 /** Send randomized heart rate data continuously **/
 void loop(void)
 {
-  //int val = random(50, 100);
+  //int heart_rate = random(50, 100);
+  int heart_rate = map(analogRead(analogPin), 0, 1023, 1, 100);
 
-  long val = map(analogRead(analogPin), 0, 1023, 0, 100);
-  
-//  Serial.print(F("Updating HRM value to "));
-//  Serial.print(val);
-//  Serial.println(F(" BPM"));
+  //Serial.print(F("Updating HRM value to "));
+  //Serial.print(heart_rate);
+  //Serial.println(F(" BPM"));
 
   /* Command is sent when \n (\r) or println is called */
   /* AT+GATTCHAR=CharacteristicID,value */
   ble.print( F("AT+GATTCHAR=") );
   ble.print( hrmMeasureCharId );
   ble.print( F(",00-") );
-  ble.println(val, HEX);
-
-
-  ble.print( F("AT+GATTCHAR=") );
-  ble.print( hrmLocationCharId );
-  //ble.print( F(",00-") );
-  ble.print( F(",") );
-  ble.println(val, HEX);
+  //ble.print( F(",") );
+  ble.println(heart_rate, HEX);
 
   /* Check if command executed OK */
   //if ( !ble.waitForOK() )
   //{
-  //  Serial.println(F("Failed to get response!"));
+  //  //Serial.println(F("Failed to get response!"));
+  //  digitalWrite(LED_BUILTIN, LOW);   // turn the LED on (HIGH is the voltage level)
+  //}
+  //else
+  //{
+  //  digitalWrite(LED_BUILTIN, HIGH);    // turn the LED off by making the voltage LOW
   //}
 
   /* Delay before next measurement update */

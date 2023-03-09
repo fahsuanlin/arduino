@@ -89,12 +89,12 @@ void setup()
   //    'CC': 'coil_code',
   siemens_eeprom[0].code = "CC";
   siemens_eeprom[0].code_length = 2;
-  siemens_eeprom[0].val = "530a";
+  siemens_eeprom[0].val = "5304";
 
   //    'PN': 'product_name',
   siemens_eeprom[1].code = "PN";
   siemens_eeprom[1].code_length = 2;
-  siemens_eeprom[1].val = "My coil";
+  siemens_eeprom[1].val = "4ch";
 
   //    'ID': 'siemens_part_number',
   siemens_eeprom[2].code = "ID";
@@ -142,7 +142,7 @@ void setup()
 
   siemens_eeprom[11].code = "IT05";
   siemens_eeprom[11].code_length = 4;
-  siemens_eeprom[11].val = "nice_coil";
+  siemens_eeprom[11].val = "fhlin_coil";
 
   //siemens_eeprom[12].code = "EOFI";
   //siemens_eeprom[12].code_length = 4;

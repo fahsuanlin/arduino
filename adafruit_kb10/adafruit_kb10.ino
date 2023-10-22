@@ -305,7 +305,7 @@ void loop(void)
   }  
   
   if (pressed) {
-    delay(400);
+    delay(150);
     j_voltage = digitalRead(jPin);
     k_voltage = digitalRead(kPin);
     l_voltage = digitalRead(lPin);

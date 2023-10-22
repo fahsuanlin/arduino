@@ -94,7 +94,7 @@ void setup()
   //    'PN': 'product_name',
   siemens_eeprom[1].code = "PN";
   siemens_eeprom[1].code_length = 2;
-  siemens_eeprom[1].val = "4ch";
+  siemens_eeprom[1].val = "FUS_4ch";
 
   //    'ID': 'siemens_part_number',
   siemens_eeprom[2].code = "ID";

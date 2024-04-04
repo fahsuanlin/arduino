@@ -157,7 +157,7 @@ void loop(void)
   int heart_rate = map(analogRead(analogPin), 0, 1023, 1, 100);
 
   //Serial.print(F("Updating HRM value to "));
-  //Serial.print(heart_rate);
+  Serial.print(heart_rate);
   //Serial.println(F(" BPM"));
 
   /* Command is sent when \n (\r) or println is called */

@@ -4,12 +4,15 @@ char end_char = '9'; //end-of-experiment
 int ttl_output = 5;  //port for forwarding input; D5
 int ttl_input = 4;  //port for notifying received TTL pulse; D4
 int ttl_input_monitor = 15;  //port for notifying received TTL pulse; A1  (Nano)
+int ttl_input_bridge_monitor = 16;  //port for briding received TTL pulse; A2  (Nano)
+//int ttl_input_bridge_monitor = 8;  //port for briding received TTL pulse; D8  (Nano)
 
 //int pass_port_in = 2;  //port for receiving TT: pulse; D2
 //int ttl_port = 3; //port for sending TTL pulse
 
 int ttl_output_debounce_time = 100; //debounce time; ms
-int ttl_input_debounce_time = 100; //debounce time; ms
+int ttl_input_debounce_time = 1000; //debounce time; ms
+int ttl_input_duration_time = 10; //trigger output duration; ms
 
 
 unsigned long ttl_output_time; //time instant for output
@@ -25,6 +28,7 @@ void setup() {
   pinMode(ttl_output, OUTPUT);
   pinMode(ttl_input, OUTPUT);
   pinMode(ttl_input_monitor, INPUT);
+  pinMode(ttl_input_bridge_monitor, INPUT);
 
   ttl_input_time = millis();
   ttl_input_n = 0;
@@ -58,14 +62,28 @@ void loop() {
 
   }
 
-  if (millis() - ttl_input_time > ttl_input_debounce_time) {
-    digitalWrite(ttl_input, LOW);   // turn the input LED off
 
+
+  unsigned int bridge_flag = analogRead(ttl_input_bridge_monitor);
+  //Serial.println(bridge_flag);
+
+  if (millis() - ttl_input_time > ttl_input_duration_time) {
+    digitalWrite(ttl_input, LOW);   // turn the input LED off
+  }
+
+  if (millis() - ttl_input_time > ttl_input_debounce_time) {
     unsigned int incomingTTL = analogRead(ttl_input_monitor);
 
     if (incomingTTL > 900) {
       digitalWrite(ttl_input, HIGH);   // turn the LED on (HIGH is the voltage level)
 
+      if (bridge_flag > 900) { // bridge ttl input to output
+        digitalWrite(ttl_output, HIGH);   // turn the LED on (HIGH is the voltage level)
+        ttl_output_time = millis();
+
+        ttl_output_n++;
+      }
+      
       ttl_input_time = millis();
 
       ttl_input_n++;

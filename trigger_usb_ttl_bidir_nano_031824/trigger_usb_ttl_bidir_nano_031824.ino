@@ -10,8 +10,8 @@ int ttl_input_bridge_monitor = 16;  //port for briding received TTL pulse; A2  (
 //int pass_port_in = 2;  //port for receiving TT: pulse; D2
 //int ttl_port = 3; //port for sending TTL pulse
 
-int ttl_output_debounce_time = 100; //debounce time; ms
-int ttl_input_debounce_time = 1000; //debounce time; ms
+int ttl_output_debounce_time = 10; //debounce time; ms
+int ttl_input_debounce_time = 500; //debounce time; ms
 int ttl_input_duration_time = 10; //trigger output duration; ms
 
 
@@ -73,11 +73,12 @@ void loop() {
 
   if (millis() - ttl_input_time > ttl_input_debounce_time) {
     unsigned int incomingTTL = analogRead(ttl_input_monitor);
+      //Serial.println(incomingTTL);
 
     if (incomingTTL > 500) {
       digitalWrite(ttl_input, HIGH);   // turn the LED on (HIGH is the voltage level)
 
-      if (bridge_flag > 500) { // bridge ttl input to output
+      if (bridge_flag > 900) { // bridge ttl input to output
         digitalWrite(ttl_output, HIGH);   // turn the LED on (HIGH is the voltage level)
         ttl_output_time = millis();
 

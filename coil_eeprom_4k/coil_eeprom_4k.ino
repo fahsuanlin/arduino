@@ -89,12 +89,12 @@ void setup()
   //    'CC': 'coil_code',
   siemens_eeprom[0].code = "CC";
   siemens_eeprom[0].code_length = 2;
-  siemens_eeprom[0].val = "5304";
+  siemens_eeprom[0].val = "5303";
 
   //    'PN': 'product_name',
   siemens_eeprom[1].code = "PN";
   siemens_eeprom[1].code_length = 2;
-  siemens_eeprom[1].val = "FUS_4ch";
+  siemens_eeprom[1].val = "2ch";
 
   //    'ID': 'siemens_part_number',
   siemens_eeprom[2].code = "ID";

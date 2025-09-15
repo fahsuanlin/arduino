@@ -6,6 +6,8 @@
 #include <SPI.h>
 #include <Wire.h>
 
+#include <Keyboard.h>
+
 #define BUTTON_PIN A1 //arduino micro D4
 #define PHOTO_PIN A0  //arduino micro A0
 #define PHOTO_LED_PIN A8 //arduino micro A1
@@ -52,7 +54,7 @@ void setup()
   photo_status_str = "-";
   touch_status_str = "-";
 
-
+  Keyboard.begin();
 }
 void loop()
 {
@@ -77,6 +79,10 @@ void loop()
       u8g2.drawStr(8, 29, led_string_buffer);
       u8g2.sendBuffer();         // transfer internal memory to the display
 
+      //keyboard output for touch detection
+      Keyboard.press('T');
+      delay(10);
+      Keyboard.releaseAll();
 
       float lapsedtime = currentMillis - startMillis;
       Serial.print(led_string);
@@ -84,7 +90,6 @@ void loop()
       Serial.print(lapsedtime / 1e3, 3);
       Serial.print(", ");
       Serial.println(photo_status);
-      Serial.println();
 
       analogWrite(BUTTON_LED_PIN, 255);
       //delay(1);
@@ -124,6 +129,12 @@ void loop()
 
       u8g2.sendBuffer();         // transfer internal memory to the display
 
+
+      //keyboard output for light detection
+      Keyboard.press('L');
+      delay(10);
+      Keyboard.releaseAll();
+      
       photo_status = 1;
 
       float lapsedtime = currentMillis - startMillis;
@@ -132,8 +143,7 @@ void loop()
       Serial.print(lapsedtime / 1e3, 3);
       Serial.print(", ");
       Serial.println(photo_status);
-      Serial.println();
-    }
+    }L
   }
   else {
     photo_status_str = "-";
@@ -150,15 +160,13 @@ void loop()
       u8g2.sendBuffer();         // transfer internal memory to the display
 
       photo_status = 0;
-
-
+      
       float lapsedtime = currentMillis - startMillis;
       Serial.print(led_string);
       Serial.print(": ");
       Serial.print(lapsedtime / 1e3, 3);
       Serial.print(", ");
       Serial.println(photo_status);
-      Serial.println();
 
     }
   }

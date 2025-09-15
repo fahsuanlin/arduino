@@ -10,8 +10,16 @@
 // Include the I2C Wire Library
 #include "Wire.h"
 
+#include <U8g2lib.h>
+//U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2(U8G2_R0);
+U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+String led_string;
+char led_string_buffer[50];
+
+
 // EEPROM I2C Address
 #define EEPROM_I2C_ADDRESS 0x50
+//#define EEPROM_I2C_ADDRESS 0x00
 
 // Analog pin for potentiometer
 int analogPin = 0;
@@ -32,6 +40,20 @@ typedef struct {
 } siemens_eeprom_type;
 
 
+
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
+#define BYTE_TO_BINARY(byte)  \
+  (byte & 0x80 ? '1' : '0'), \
+  (byte & 0x40 ? '1' : '0'), \
+  (byte & 0x20 ? '1' : '0'), \
+  (byte & 0x10 ? '1' : '0'), \
+  (byte & 0x08 ? '1' : '0'), \
+  (byte & 0x04 ? '1' : '0'), \
+  (byte & 0x02 ? '1' : '0'), \
+  (byte & 0x01 ? '1' : '0')
+
+
+
 // Function to write to EEPROOM
 void writeEEPROM(int address, byte val, int i2c_address)
 {
@@ -39,7 +61,7 @@ void writeEEPROM(int address, byte val, int i2c_address)
   Wire.beginTransmission(i2c_address);
 
   // Send memory address as two 8-bit bytes
-  // Wire.write((int)(address >> 8));   // MSB
+  //Wire.write((int)(address >> 8));   // MSB
   Wire.write((int)(address & 0xFF)); // LSB
 
   // Send data to be stored
@@ -62,7 +84,7 @@ byte readEEPROM(int address, int i2c_address)
   Wire.beginTransmission(i2c_address);
 
   // Send memory address as two 8-bit bytes
-  // Wire.write((int)(address >> 8));   // MSB
+  //Wire.write((int)(address >> 8));   // MSB
   Wire.write((int)(address & 0xFF)); // LSB
 
   // End the transmission
@@ -89,12 +111,12 @@ void setup()
   //    'CC': 'coil_code',
   siemens_eeprom[0].code = "CC";
   siemens_eeprom[0].code_length = 2;
-  siemens_eeprom[0].val = "5303";
+  siemens_eeprom[0].val = "5332";
 
   //    'PN': 'product_name',
   siemens_eeprom[1].code = "PN";
   siemens_eeprom[1].code_length = 2;
-  siemens_eeprom[1].val = "TemporalLobe_24ch";
+  siemens_eeprom[1].val = "My coil";
 
   //    'ID': 'siemens_part_number',
   siemens_eeprom[2].code = "ID";
@@ -142,7 +164,7 @@ void setup()
 
   siemens_eeprom[11].code = "IT05";
   siemens_eeprom[11].code_length = 4;
-  siemens_eeprom[11].val = "fhlin_coil";
+  siemens_eeprom[11].val = "nice_coil";
 
   //siemens_eeprom[12].code = "EOFI";
   //siemens_eeprom[12].code_length = 4;
@@ -161,91 +183,6 @@ void setup()
   unsigned int ll;
   String str;
 
-  address = 0;
-  for (int eeprom_entry_idx = 0; eeprom_entry_idx < 12; eeprom_entry_idx++) {
-
-    message = siemens_eeprom[eeprom_entry_idx].code;
-
-    for (int idx = 0; idx < message.length(); idx++) {
-      writeEEPROM(address, (byte) (message[idx]), EEPROM_I2C_ADDRESS);
-      //writeEEPROM(address, "C", EEPROM_I2C_ADDRESS);
-      delay(5);
-      address += 1;
-    };
-
-
-
-//    address = 0;
-//    for (int idx = 0; idx < message.length(); idx++) {
-//      int readVal = readEEPROM(address, EEPROM_I2C_ADDRESS);
-//      address++;
-//      Serial.println(readVal);
-//    };
-//    return;
-
-
-    
-   
-    if (message == "CC") {
-      ll = 2;
-
-      writeEEPROM(address, ll >> 8, EEPROM_I2C_ADDRESS);
-      delay(5);
-      address += 1;
-      writeEEPROM(address, ll & 0xFF , EEPROM_I2C_ADDRESS);
-      delay(5);
-      address += 1;
-
-      //read coil code
-      char ccstr[5];
-      siemens_eeprom[eeprom_entry_idx].val.toCharArray(ccstr, 5);
-      ll = strtoul(ccstr, NULL, 16);
-     
-      writeEEPROM(address, ll >> 8, EEPROM_I2C_ADDRESS);
-      delay(5);
-      address += 1;
-      writeEEPROM(address, ll & 0xFF , EEPROM_I2C_ADDRESS);
-      delay(5);
-      address += 1;
-    }
-    else {
-      //write 2-byte number
-      str = siemens_eeprom[eeprom_entry_idx].val;
-      ll = str.length();
-
-      writeEEPROM(address, ll >> 8, EEPROM_I2C_ADDRESS);
-      delay(5);
-      address += 1;
-      writeEEPROM(address, ll & 0xFF , EEPROM_I2C_ADDRESS);
-      delay(5);
-      address += 1;
-
-
-      //write string
-      for (int str_idx = 0; str_idx < str.length(); str_idx++) {
-        writeEEPROM(address, str[str_idx], EEPROM_I2C_ADDRESS);
-        delay(5);
-        address += 1;
-      }
-    }
-  }
-  //write "EOFI: string
-  str = "EOFI";
-  for (int str_idx = 0; str_idx < str.length(); str_idx++) {
-    writeEEPROM(address, str[str_idx], EEPROM_I2C_ADDRESS);
-    delay(5);
-    address += 1;
-  }
-  //pad 0 until 256 bytes
-  for (int str_idx = 0; str_idx < (256 - address); str_idx++) {
-    writeEEPROM(address, 0, EEPROM_I2C_ADDRESS);
-    //delay(5);
-    address += 1;
-  }
-  //-------end of writing EEPROM --------------
-
-  delay(1000);
-
   Serial.println("====");
 
   //-------read EEPROM --------------
@@ -256,6 +193,37 @@ void setup()
 
   address = 0;
 
+//  for (int idx = 0; idx < 256; idx++) {
+//    //read two (or a few) characters
+//    readVal1 = readEEPROM(address, EEPROM_I2C_ADDRESS);
+//    //byte tmp = readEEPROM(address, EEPROM_I2C_ADDRESS);
+//    address++;
+//    //Serial.print((char)readVal1);
+//
+//    char buffer[40];
+//    //sprintf(buffer, "%08b", readVal1);
+//
+//    sprintf(buffer, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(readVal1));
+//    Serial.print(buffer);
+//    //Serial.print("%08b",readVal1,BIN);
+//    Serial.print("|");
+//    Serial.print((char)readVal1);
+//    Serial.print("|");
+//    Serial.println((int)readVal1);
+//  };
+
+
+//  Wire.setSDA(MY_SDA_PIN);
+//  Wire.setSCL(MY_SCL_PIN);
+  u8g2.begin();
+    led_string ="....";
+    led_string.toCharArray(led_string_buffer, 50);
+    u8g2.clearBuffer();          // clear the internal memory
+    u8g2.setFont(u8g2_font_logisoso28_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
+    u8g2.drawStr(8, 29, led_string_buffer);
+    u8g2.sendBuffer(); 
+    delay(1000);  
+      
   for (int eeprom_entry_idx = 0; eeprom_entry_idx < 12; eeprom_entry_idx++) {
     cc_counter = 0;
     for (int idx = 0; idx < siemens_eeprom[eeprom_entry_idx].code_length; idx++) {
@@ -263,7 +231,10 @@ void setup()
       readVal1 = readEEPROM(address, EEPROM_I2C_ADDRESS);
       //byte tmp = readEEPROM(address, EEPROM_I2C_ADDRESS);
       address++;
-      Serial.print((char)readVal1);
+      //Serial.print((char)readVal1);
+      Serial.print(readVal1, BIN);
+      Serial.print("|");
+      Serial.println((char)readVal1);
       if (readVal1 == 67) {
         cc_counter++;
       }; //two "C"?
@@ -300,6 +271,17 @@ void setup()
       unsigned int coil_code = (readVal1 << 8) + (readVal2 & 0xFF);
 
       Serial.println(String(coil_code, HEX));
+
+    
+      led_string =String(coil_code, HEX);
+      led_string.toCharArray(led_string_buffer, 50);
+      u8g2.clearBuffer();          // clear the internal memory
+      u8g2.setFont(u8g2_font_logisoso28_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
+      u8g2.drawStr(8, 29, led_string_buffer);
+      u8g2.sendBuffer();         // transfer internal memory to the display
+
+    
+    
     }
     else {
       //read a two-byte number (the string length)

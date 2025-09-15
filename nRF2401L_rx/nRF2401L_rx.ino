@@ -19,21 +19,27 @@ void loop()
 {
   if (radio.available())              //Looking for the data.
   {
-    char text[32] = "";                 //Saving the incoming data
-    radio.read(&text, sizeof(text));    //Reading the data
+    char text[2] = "";                 //Saving the incoming data
+    //radio.read(&text, sizeof(text));    //Reading the data
     radio.read(&button_state, sizeof(button_state));    //Reading the data
-    if (button_state == HIGH)
+    //Serial.println((char)text);
+    Serial.println(button_state);
+    if (button_state == 1)
     {
       Serial.println("RX:HIGH");
       digitalWrite(6, HIGH);
-      Serial.println(text);
+      //Serial.println(text);
     }
     else
     {
       Serial.println("RX:LOW");
       digitalWrite(6, LOW);
-      Serial.println(text);
+      //Serial.println(text);
     }
   }
-  delay(5);
+  else
+  {
+    Serial.println("None...");
+  }
+  delay(10);
 }

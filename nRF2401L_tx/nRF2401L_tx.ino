@@ -1,41 +1,42 @@
+// nrf24_tx_simple.ino
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
-RF24 radio(9, 10); // CE, CSN
-const byte address[6] = "00001";     //Byte of array representing the address. This is the address where we will send the data. This should be same on the receiving side.
-int button_pin = 4;
-boolean button_state = 0;
+
+#define CE_PIN  9
+#define CSN_PIN 10
+RF24 radio(CE_PIN, CSN_PIN);
+
+const byte PIPE_ADDR[6] = "NODE1";  // 5 bytes + '\0'
+
 void setup() {
-  Serial.begin(9600);
-  Serial.println("Tx");
-  
-  pinMode(button_pin, INPUT);
-  radio.begin();                  //Starting the Wireless communication
-  radio.openWritingPipe(address); //Setting the address where we will send the data
-  radio.setPALevel(RF24_PA_MIN);  //You can set it as minimum or maximum depending on the distance between the transmitter and receiver.
-  radio.stopListening();          //This sets the module as transmitter
+  Serial.begin(115200);
+  delay(50);
+  Serial.println(F("TX simple boot"));
+
+  if (!radio.begin()) {
+    Serial.println(F("ERROR: radio.begin() failed — wiring/power"));
+    while (1) { delay(1000); }
+  }
+
+  radio.setAutoAck(false);            // turn off ACKs to simplify
+  radio.setChannel(76);               // change later if needed (0–125)
+  radio.setDataRate(RF24_1MBPS);      // try RF24_250KBPS if clones are finicky
+  radio.setPALevel(RF24_PA_MIN);      // low power for bench distance
+
+  radio.disableDynamicPayloads();     // fixed size
+  radio.setPayloadSize(5);            // we'll send "TEST\0"
+
+  radio.openWritingPipe(PIPE_ADDR);
+  radio.stopListening();
+
+  Serial.println(F("TX ready"));
 }
-void loop()
-{
-  button_state = digitalRead(button_pin);
-  if (button_state == HIGH)
-  {
-    Serial.println("TX:HIGH");
-    const char text[] = "1111";
-    //radio.write(&text, sizeof(text));                  //Sending the message to receiver
-    button_state=1;
-    radio.write(&button_state, sizeof(button_state));                  //Sending the message to receiver
-    Serial.println(button_state);
-  }
-  else
-  {
-    Serial.println("TX:LOW");
-    const char text[1] = "0000";
-    //radio.write(&text, sizeof(text));                  //Sending the message to receiver
-    button_state=0;
-    radio.write(&button_state, sizeof(button_state));                  //Sending the message to receiver
-    Serial.println(button_state);
-  }
-  //radio.write(&button_state, sizeof(button_state));  //Sending the message to receiver
-  delay(10);
+
+void loop() {
+  char msg[5] = {'T','E','S','T','\0'}; // 5 bytes
+  bool ok = radio.write(msg, 5);
+  Serial.print(F("TX sent 'TEST' ok="));
+  Serial.println(ok ? F("yes") : F("no"));
+  delay(200);
 }

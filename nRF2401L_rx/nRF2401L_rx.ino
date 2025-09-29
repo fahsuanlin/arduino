@@ -1,45 +1,64 @@
+// nrf24_rx_verbose.ino
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
-RF24 radio(9, 10); // CE, CSN
-const byte address[6] = "00001";
-boolean button_state = 0;
-int led_pin = 3;
+
+#define CE_PIN  9
+#define CSN_PIN 10
+RF24 radio(CE_PIN, CSN_PIN);
+
+const byte PIPE_ADDR[6] = "NODE1";
+
+unsigned long lastStatus = 0;
+
 void setup() {
-  pinMode(6, OUTPUT);
-  Serial.begin(9600);
-  Serial.println("Rx");
-  
-  radio.begin();
-  radio.openReadingPipe(0, address);   //Setting the address at which we will receive the data
-  radio.setPALevel(RF24_PA_MIN);       //You can set this as minimum or maximum depending on the distance between the transmitter and receiver.
-  radio.startListening();              //This sets the module as receiver
+  Serial.begin(115200);
+  delay(50);
+  Serial.println(F("RX verbose boot"));
+
+  if (!radio.begin()) {
+    Serial.println(F("ERROR: radio.begin() failed — wiring/power"));
+    while (1) { delay(1000); }
+  }
+
+  radio.setAutoAck(false);            // must match TX
+  radio.setChannel(76);               // must match TX
+  radio.setDataRate(RF24_1MBPS);      // must match TX
+  radio.setPALevel(RF24_PA_MIN);
+
+  radio.disableDynamicPayloads();
+  radio.setPayloadSize(5);
+
+  radio.openReadingPipe(0, PIPE_ADDR);
+  radio.startListening();
+
+  Serial.println(F("RX ready"));
+  // Optional: radio.printDetails(); // uncomment after it works
 }
-void loop()
-{
-  if (radio.available())              //Looking for the data.
-  {
-    char text[2] = "";                 //Saving the incoming data
-    //radio.read(&text, sizeof(text));    //Reading the data
-    radio.read(&button_state, sizeof(button_state));    //Reading the data
-    //Serial.println((char)text);
-    Serial.println(button_state);
-    if (button_state == 1)
-    {
-      Serial.println("RX:HIGH");
-      digitalWrite(6, HIGH);
-      //Serial.println(text);
-    }
-    else
-    {
-      Serial.println("RX:LOW");
-      digitalWrite(6, LOW);
-      //Serial.println(text);
-    }
+
+void loop() {
+  // Periodically print basic RF status (energy detect)
+  if (millis() - lastStatus > 1000) {
+    lastStatus = millis();
+
+    // Quick energy check: testRPD() returns true if > -64 dBm since last call
+    bool energy = radio.testRPD();
+    Serial.print(F("Status: RPD="));
+    Serial.print(energy ? F("HIGH") : F("LOW"));
+    Serial.print(F("  CH=")); Serial.print(76);
+    Serial.print(F("  DR=1Mbps  PA=MIN"));
+    Serial.println();
   }
-  else
-  {
-    Serial.println("None...");
+
+  if (!radio.available()) return;
+
+  char buf[6];              // 5 + '\0'
+  radio.read(buf, 5);       // read exactly 5 bytes
+  buf[4] = '\0';            // ensure printable
+
+  Serial.print(F("RX raw: "));
+  for (uint8_t i = 0; i < 5; ++i) {
+    Serial.print((uint8_t)buf[i], HEX); Serial.print(' ');
   }
-  delay(10);
+  Serial.print(F("  text:[")); Serial.print(buf); Serial.println(F("]"));
 }

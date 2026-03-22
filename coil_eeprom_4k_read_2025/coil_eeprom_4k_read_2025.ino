@@ -185,6 +185,7 @@ void setup()
 
   Serial.println("====");
 
+
   //-------read EEPROM --------------
 
   byte readVal1, readVal2;
@@ -215,8 +216,8 @@ void setup()
 
 //  Wire.setSDA(MY_SDA_PIN);
 //  Wire.setSCL(MY_SCL_PIN);
-  u8g2.begin();
-    led_string ="....";
+    u8g2.begin();
+    led_string ="reading";
     led_string.toCharArray(led_string_buffer, 50);
     u8g2.clearBuffer();          // clear the internal memory
     u8g2.setFont(u8g2_font_logisoso28_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall

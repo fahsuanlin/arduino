@@ -143,7 +143,7 @@ void loop()
       Serial.print(lapsedtime / 1e3, 3);
       Serial.print(", ");
       Serial.println(photo_status);
-    }L
+    }
   }
   else {
     photo_status_str = "-";

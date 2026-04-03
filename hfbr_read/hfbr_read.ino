@@ -32,6 +32,15 @@ void setup() {
   digitalWrite(flipOutputPin, LOW);
   digitalWrite(onboardLed, LOW);
 
+  led_string = "wait...";
+  led_string.toCharArray(led_string_buffer, 50);
+  u8g2.clearBuffer();          // clear the internal memory
+  u8g2.setFont(u8g2_font_logisoso28_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
+  u8g2.drawStr(8, 29, led_string_buffer);
+  u8g2.sendBuffer();         // transfer internal memory to the display
+
+
+
   Serial.begin(9600);
   Serial.println("System Active: Monitoring Fiber for FLIP signal...");
 }

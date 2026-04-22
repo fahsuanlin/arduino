@@ -17,6 +17,7 @@ char led_string_buffer[50];
 const int fiberInputPin = 2;
 const int flipOutputPin = 3; // This pin will provide the "FLIP!" signal
 const int onboardLed = 13;   // Standard Nano LED
+const int flipBNC = 4;    // BNC trigger
 
 U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2(U8G2_R0);
 
@@ -24,9 +25,10 @@ void setup() {
 
   u8g2.begin();
 
-  pinMode(fiberInputPin, INPUT);
+  pinMode(fiberInputPin, INPUT_PULLUP);
   pinMode(flipOutputPin, OUTPUT);
   pinMode(onboardLed, OUTPUT);
+  pinMode(flipBNC, OUTPUT);
 
   // Ensure outputs start at 0V
   digitalWrite(flipOutputPin, LOW);
@@ -40,17 +42,19 @@ void setup() {
   u8g2.sendBuffer();         // transfer internal memory to the display
 
 
-
   Serial.begin(9600);
   Serial.println("System Active: Monitoring Fiber for FLIP signal...");
 }
 
 void loop() {
+  //Serial.println(analogRead(fiberInputPin));
+  
   // Check if D2 is pulled LOW by the HFBR receiver
   if (digitalRead(fiberInputPin) == LOW) {
 
     // 1. Trigger the physical FLIP! output
     digitalWrite(flipOutputPin, HIGH);
+    digitalWrite(flipBNC, HIGH);
 
     // 2. Trigger the onboard diagnostic LED
     digitalWrite(onboardLed, HIGH);
@@ -71,6 +75,7 @@ void loop() {
     // 5. Reset both pins to LOW
     digitalWrite(flipOutputPin, LOW);
     digitalWrite(onboardLed, LOW);
+    digitalWrite(flipBNC, LOW);
 
     led_string = "OFF";
     led_string.toCharArray(led_string_buffer, 50);

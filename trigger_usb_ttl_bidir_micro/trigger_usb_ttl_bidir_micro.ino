@@ -1,4 +1,3 @@
-
 #include <Keyboard.h>
 
 char trigger_char = '1'; //trigger for TTL pulse
@@ -74,8 +73,8 @@ void loop() {
   
   if (millis() - ttl_input_time > ttl_input_debounce_time) {
     unsigned int incomingTTL = analogRead(ttl_input_monitor);
-
-    if (incomingTTL > 500) {
+    //if(incomingTTL>0)      Serial.println(incomingTTL);
+    if (incomingTTL > 200) {
       digitalWrite(ttl_input, HIGH);   // turn the LED on (HIGH is the voltage level)
 
       Keyboard.write(ttl_ipput_response_char); // send Keyboard stroke

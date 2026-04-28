@@ -97,12 +97,12 @@ void setup()
   //    'CC': 'coil_code',
   siemens_eeprom[0].code = "CC";
   siemens_eeprom[0].code_length = 2;
-  siemens_eeprom[0].val = "5309";
+  siemens_eeprom[0].val = "5304";
 
   //    'PN': 'product_name',
   siemens_eeprom[1].code = "PN";
   siemens_eeprom[1].code_length = 2;
-  siemens_eeprom[1].val = "8Ch";
+  siemens_eeprom[1].val = "FUS_12Ch";
 
   //    'ID': 'siemens_part_number',
   siemens_eeprom[2].code = "ID";
@@ -205,6 +205,7 @@ void setup()
 
 
     if (message == "CC") {
+      //write coil code length
       ll = 2;
 
       writeEEPROM(address, ll >> 8, EEPROM_I2C_ADDRESS);
@@ -214,7 +215,7 @@ void setup()
       delay(5);
       address += 1;
 
-      //read coil code
+      //write coil code
       char ccstr[5];
       siemens_eeprom[eeprom_entry_idx].val.toCharArray(ccstr, 5);
       ll = strtoul(ccstr, NULL, 16);
@@ -354,14 +355,18 @@ void setup()
   //-------end of reading EEPROM --------------
 
   Serial.println("====");
-
-  led_string =String(coil_code_read, HEX);
-  led_string.toCharArray(led_string_buffer, 50);
+  Serial.println((coil_code_read));
+  Serial.println("----");
+  
+  sprintf(led_string_buffer, "%X", coil_code_read);  
   u8g2.clearBuffer();          // clear the internal memory
   u8g2.setFont(u8g2_font_logisoso28_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
   u8g2.drawStr(8, 29, led_string_buffer);
   u8g2.sendBuffer();
   delay(100);
+
+  Serial.println(led_string_buffer);
+
 }
 
 void loop()

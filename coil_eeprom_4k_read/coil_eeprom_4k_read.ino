@@ -6,6 +6,11 @@
   DroneBot Workshop 2019
   https://dronebotworkshop.com
 */
+#include <U8g2lib.h>
+//U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2(U8G2_R0);
+U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+String led_string;
+char led_string_buffer[50];
 
 // Include the I2C Wire Library
 #include "Wire.h"
@@ -32,7 +37,7 @@ typedef struct {
   unsigned int code_length;
 } siemens_eeprom_type;
 
-
+unsigned int coil_code;
 
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)  \
@@ -54,7 +59,7 @@ void writeEEPROM(int address, byte val, int i2c_address)
   Wire.beginTransmission(i2c_address);
 
   // Send memory address as two 8-bit bytes
-  //Wire.write((int)(address >> 8));   // MSB
+  Wire.write((int)(address >> 8));   // MSB
   Wire.write((int)(address & 0xFF)); // LSB
 
   // Send data to be stored
@@ -170,83 +175,21 @@ void setup()
   // Setup Serial Monitor
   Serial.begin(9600);
 
+  u8g2.begin();
+  led_string = "reading";
+  led_string.toCharArray(led_string_buffer, 50);
+  u8g2.clearBuffer();          // clear the internal memory
+  u8g2.setFont(u8g2_font_logisoso28_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
+  u8g2.drawStr(8, 29, led_string_buffer);
+  u8g2.sendBuffer();
+  delay(100);
   //-------write EEPROM --------------
 
   String message;
   unsigned int ll;
   String str;
 
-//  address = 0;
-//  for (int eeprom_entry_idx = 0; eeprom_entry_idx < 12; eeprom_entry_idx++) {
-//
-//    message = siemens_eeprom[eeprom_entry_idx].code;
-//
-//    for (int idx = 0; idx < message.length(); idx++) {
-//      writeEEPROM(address, (byte) (message[idx]), EEPROM_I2C_ADDRESS);
-//      delay(5);
-//      address += 1;
-//    };
-//
-//
-//    if (message == "CC") {
-//      ll = 2;
-//
-//      writeEEPROM(address, ll >> 8, EEPROM_I2C_ADDRESS);
-//      delay(5);
-//      address += 1;
-//      writeEEPROM(address, ll & 0xFF , EEPROM_I2C_ADDRESS);
-//      delay(5);
-//      address += 1;
-//
-//      //read coil code
-//      char ccstr[5];
-//      siemens_eeprom[eeprom_entry_idx].val.toCharArray(ccstr, 5);
-//      ll = strtoul(ccstr, NULL, 16);
-//
-//      writeEEPROM(address, ll >> 8, EEPROM_I2C_ADDRESS);
-//      delay(5);
-//      address += 1;
-//      writeEEPROM(address, ll & 0xFF , EEPROM_I2C_ADDRESS);
-//      delay(5);
-//      address += 1;
-//    }
-//    else {
-//      //write 2-byte number
-//      str = siemens_eeprom[eeprom_entry_idx].val;
-//      ll = str.length();
-//
-//      writeEEPROM(address, ll >> 8, EEPROM_I2C_ADDRESS);
-//      delay(5);
-//      address += 1;
-//      writeEEPROM(address, ll & 0xFF , EEPROM_I2C_ADDRESS);
-//      delay(5);
-//      address += 1;
-//
-//
-//      //write string
-//      for (int str_idx = 0; str_idx < str.length(); str_idx++) {
-//        writeEEPROM(address, str[str_idx], EEPROM_I2C_ADDRESS);
-//        delay(5);
-//        address += 1;
-//      }
-//    }
-//  }
-//  //write "EOFI: string
-//  str = "EOFI";
-//  for (int str_idx = 0; str_idx < str.length(); str_idx++) {
-//    writeEEPROM(address, str[str_idx], EEPROM_I2C_ADDRESS);
-//    delay(5);
-//    address += 1;
-//  }
-//  //pad 0 until 256 bytes
-//  for (int str_idx = 0; str_idx < (256 - address); str_idx++) {
-//    writeEEPROM(address, 0, EEPROM_I2C_ADDRESS);
-//    //delay(5);
-//    address += 1;
-//  }
-//  //-------end of writing EEPROM --------------
-//
-//  delay(1000);
+
 
   Serial.println("====");
 
@@ -257,28 +200,6 @@ void setup()
   int cc_counter = 0;
 
   address = 0;
-
-for (int idx = 0; idx < 256; idx++) {
-      //read two (or a few) characters
-      readVal1 = readEEPROM(address, EEPROM_I2C_ADDRESS);
-      //byte tmp = readEEPROM(address, EEPROM_I2C_ADDRESS);
-      address++;
-      //Serial.print((char)readVal1);
-
-      char buffer[40];
-      //sprintf(buffer, "%08b", readVal1);
-
-      sprintf(buffer,BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(readVal1));
-      Serial.print(buffer);
-      //Serial.print("%08b",readVal1,BIN);
-      Serial.print("|");
-      Serial.print((char)readVal1);
-      Serial.print("|");
-      Serial.println((int)readVal1);
-};
-return;
-
-
 
   for (int eeprom_entry_idx = 0; eeprom_entry_idx < 12; eeprom_entry_idx++) {
     cc_counter = 0;
@@ -291,18 +212,17 @@ return;
       Serial.print(readVal1,BIN);
       Serial.print("|");
       Serial.println((char)readVal1);
-      return;
       if (readVal1 == 67) {
         cc_counter++;
       }; //two "C"?
       delay(5);
     };
 
-    Serial.print("|");
-    Serial.print(cc_counter);
-    Serial.print("|");
 
     if (cc_counter == 2) {
+      //Serial.print("|");
+      //Serial.print(cc_counter);
+      //Serial.print("|");
 
       //read a two-byte number
       readVal1 = readEEPROM(address, EEPROM_I2C_ADDRESS);
@@ -314,7 +234,7 @@ return;
       unsigned int data_length = (readVal1 << 8) + (readVal2 & 0xFF);
       Serial.print(data_length);
 
-      Serial.print(":");
+      Serial.print("----- coil code ----- ::");
       //Serial.println(readVal1);
       //Serial.println(readVal2);
 
@@ -325,7 +245,7 @@ return;
       readVal2 = readEEPROM(address, EEPROM_I2C_ADDRESS);
       delay(5);
       address++;
-      unsigned int coil_code = (readVal1 << 8) + (readVal2 & 0xFF);
+      coil_code = (readVal1 << 8) + (readVal2 & 0xFF);
 
       Serial.println(String(coil_code, HEX));
     }
@@ -340,7 +260,7 @@ return;
       int data_length = (readVal1 << 8) + (readVal2 & 0xFF);
       Serial.print(data_length);
 
-      Serial.print(":");
+      Serial.print("---------->");
       //read a string
       for (int idx = 0; idx < data_length; idx++) {
         readVal = readEEPROM(address, EEPROM_I2C_ADDRESS);
@@ -354,6 +274,14 @@ return;
   //-------end of reading EEPROM --------------
 
   Serial.println("====");
+
+  sprintf(led_string_buffer, "%X", coil_code);  
+  //led_string.toCharArray(led_string_buffer, 50);
+  u8g2.clearBuffer();          // clear the internal memory
+  u8g2.setFont(u8g2_font_logisoso28_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
+  u8g2.drawStr(8, 29, led_string_buffer);
+  u8g2.sendBuffer();
+  delay(100);
 }
 
 void loop()
